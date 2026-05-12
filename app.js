@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // SESSION - must be before passport
 app.use(session({
-  store: new pgSession({ pool, tableName: "session" }),
+  store: new pgSession({ pool, tableName: "session" ,createTableIfMissing: true}),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
