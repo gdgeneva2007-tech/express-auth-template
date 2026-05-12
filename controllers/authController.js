@@ -26,6 +26,18 @@ const signupValidationRules = [
     })
 ];
 
+const loginValidationRules = [
+  body("email")
+    .trim()
+    .normalizeEmail()   // ← converts to lowercase before passport runs
+    .isEmail()
+    .withMessage("Please enter a valid email."),
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required.")
+];
+
+
 const getSignupForm = (req, res) => {
   res.render("signup", { title: "Sign Up", errors: [], formData: {} });
 };
@@ -82,7 +94,7 @@ const logout = (req, res, next) => {
 };
 
 module.exports = {
-  signupValidationRules,
+  signupValidationRules,loginValidationRules,
   getSignupForm,
   postSignup,
   getLoginForm,
