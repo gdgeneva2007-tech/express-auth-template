@@ -1,45 +1,33 @@
 // db/queries.js
-// TEMPLATE: getUserByEmail and getUserById are always needed
-// Add your project-specific queries below
-
-const pool = require("./pool");
-
-// ── REQUIRED BY PASSPORT - do not remove ──────────────
+const prisma = require("./prisma");
 
 async function getUserByEmail(email) {
-  const { rows } = await pool.query(
-    "SELECT * FROM users WHERE LOWER(email) = LOWER($1)",
-    [email]
-  );
-  return rows[0];
+  return await prisma.user.findUnique({
+    where: { email: email }
+  });
 }
 
 async function getUserById(id) {
-  const { rows } = await pool.query(
-    "SELECT * FROM users WHERE id = $1",
-    [id]
-  );
-  return rows[0];
+  return await prisma.user.findUnique({
+    where: { id: id }
+  });
 }
 
 async function createUser(user) {
-  const { rows } = await pool.query(
-    `INSERT INTO users (first_name, last_name, email, password)
-     VALUES ($1, $2, $3, $4)
-     RETURNING id, first_name, last_name, email`,
-    [user.firstName, user.lastName, user.email, user.password]
-  );
-  return rows[0];
+  return await prisma.user.create({
+    data: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password
+    }
+  });
 }
 
-// ── ADD YOUR PROJECT-SPECIFIC QUERIES BELOW ───────────
-
-
-// ──────────────────────────────────────────────────────
+// add your project queries below
 
 module.exports = {
   getUserByEmail,
   getUserById,
   createUser
-  // add your functions here
 };

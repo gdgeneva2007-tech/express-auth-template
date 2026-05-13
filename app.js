@@ -8,8 +8,8 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 const passport = require("./config/passport");
-const pgSession = require("connect-pg-simple")(session);
-const pool = require("./db/pool");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+const prisma = require("./db/prisma");
 
 // ── ADD YOUR ROUTERS HERE ──────────────────────────────
 const indexRouter = require("./routes/index");
@@ -28,7 +28,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // SESSION - must be before passport
 app.use(session({
-  store: new pgSession({ pool, tableName: "session" ,createTableIfMissing: true}),
+  store: new PrismaSessionStore(prisma, {
+    checkPeriod: 2 * 60 * 1000,
+    dbRecordIdIsSessionId: true
+  }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
